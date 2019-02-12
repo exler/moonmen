@@ -1,13 +1,9 @@
-### Django ###
-*.log
-*.pot
-*.pyc
-__pycache__/
-local_settings.py
-db.sqlite3
-media
+### Flask ###
+instance/*
+!instance/.gitignore
+.webassets-cache
 
-### Django.Python Stack ###
+### Python ###
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
@@ -76,6 +72,6 @@ ENV/
 env.bak/
 venv.bak/
 
-### Redis ###
-# Ignore redis binary dump (dump.rdb) files
-*.rdb
+### SQLite ###
+*.sqlite
+*.db
