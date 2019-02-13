@@ -1,9 +1,19 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ projectname }} | Login</title>
 
-{% block title %}Login{% endblock %}
-{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">{% endblock %}
+	<!-- CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+	{% for message in get_flashed_messages() %}
+		<div class="flash">{{ message }}</div>
+	{% endfor %}
 
-{% block content %}
 	<div class="container">
 		<form class="form-signin" action="/login" method="POST">
 			<h2 class="mb-3">{{ projectname }}</h2>
@@ -12,4 +22,5 @@
 			<img class="mb-4" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="moonmen Logo">
 		</form>
 	</div>
-{% endblock %}
+</body>
+</html>

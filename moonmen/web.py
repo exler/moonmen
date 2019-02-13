@@ -7,7 +7,15 @@ app = Flask(__name__, static_url_path="/static/")
 @app.route("/")
 def dashboard():
     if session.get("logged_in") or not os.environ["PROJECT_PASSWORD"]:
-        return render_template("home.html", projectname=os.environ["PROJECT_NAME"])
+        return render_template("dashboard.html", projectname=os.environ["PROJECT_NAME"])
+    else:
+        return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
+
+
+@app.route("/tasks")
+def tasks():
+    if session.get("logged_in") or not os.environ["PROJECT_PASSWORD"]:
+        return render_template("tasks.html", projectname=os.environ["PROJECT_NAME"])
     else:
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 

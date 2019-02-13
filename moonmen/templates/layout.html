@@ -7,14 +7,46 @@
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-	{% block style %}{% endblock %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-	{% block navbar %}{% endblock %}
 	{% for message in get_flashed_messages() %}
 		<div class="flash">{{ message }}</div>
 	{% endfor %}
-	{% block content %}{% endblock %}
-	{% block scripts %}{% endblock %}
+
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">{{ projectname }}</a>
+		<ul class="navbar-nav px-3">
+			<li class="nav-item text-nowrap">
+				{% if session["logged_in"] is defined %}<a class="nav-link" href="/logout">Logout</a>{% endif %}
+			</li>
+		</ul>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-1 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link {% block dashboard_active %}{% endblock %}" href="/"><i data-feather="home"></i>Dashboard</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link {% block tasks_active %}{% endblock %}" href="/tasks"><i data-feather="bookmark"></i>Tasks</a>
+						</li>
+					</ul>
+					<img class="sidebar-brand" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="moonmen Logo">
+				</div>
+			</nav>
+		</div>
+		<main class="col-md-11 ml-sm-auto col-lg-11 px-4">
+			{% block content %}{% endblock %}
+		</main>
+	</div>
+
+	<script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+	<script>
+		feather.replace()
+	</script>
 </body>
 </html>

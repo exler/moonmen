@@ -16,7 +16,11 @@ BLUE, RED, YELLOW, END = "\033[94m", "\033[91m", "\033[93m", "\033[0m"
 def new_project(project_name, password):
     with open("storage/{}.json".format(project_name), "w") as json_file:
         project_data = {
-            "password": password
+            "password": password,
+            "details": {
+                "description": None,
+                "url": None
+            }
         }
 
         json.dump(project_data, json_file, indent=4, sort_keys=True)
