@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">{% endblock %}
+
+{% block navbar %}
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">{{ projectname }}</a>
+		<ul class="navbar-nav px-3">
+			<li class="nav-item text-nowrap">
+				<a class="nav-link" href="/logout">Logout</a>
+			</li>
+		</ul>
+	</nav>
+{% endblock %}
+
+{% block content %}
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-1 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item"><a class="nav-link active" href="#"><i data-feather="home"></i>Dashboard</a></li>
+						<li class="nav-item"><a class="nav-link" href="#"><i data-feather="bookmark"></i>Tasks</a></li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+		<main class="col-md-11 ml-sm-auto col-lg-11 px-4">
+		</main>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+	<script>
+		feather.replace()
+	</script>
+{% endblock %}
+

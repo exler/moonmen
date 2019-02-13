@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ projectname }} | {% block title %}{% endblock %}</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+	{% block style %}{% endblock %}
+</head>
+<body>
+	{% block navbar %}{% endblock %}
+	{% for message in get_flashed_messages() %}
+		<div class="flash">{{ message }}</div>
+	{% endfor %}
+	{% block content %}{% endblock %}
+	{% block scripts %}{% endblock %}
+</body>
+</html>

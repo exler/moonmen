@@ -1,3 +1,6 @@
+### moonmen ###
+storage/*.json
+
 ### Flask ###
 instance/*
 !instance/.gitignore
