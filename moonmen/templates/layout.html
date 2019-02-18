@@ -11,7 +11,7 @@
 </head>
 <body>
 	{% for message in get_flashed_messages() %}
-		<div class="alert alert-warning">{{ message }}</div>
+		<div class="alert alert-danger">{{ message }}</div>
 	{% endfor %}
 
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">

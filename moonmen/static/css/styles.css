@@ -98,6 +98,28 @@ main > div {
 	margin-top: 3vh;
 }
 
+.alert {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  animation: hiding 3s forwards;
+  -webkit-animation: hiding 3s forwards;
+}
+
+@keyframes hiding {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@-webkit-keyframes hiding {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* -------------
     DASHBOARD
    ------------- */

@@ -45,3 +45,9 @@ def logout():
             session["logged_in"] = False
 
     return redirect("/")
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    flash("Not found! Please check the URL and try again.")
+    return redirect("/")
