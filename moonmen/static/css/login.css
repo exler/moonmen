@@ -54,3 +54,24 @@ body {
 .form-signin .btn {
   background: #2814D7;
 }
+
+.alert {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: hiding 3s forwards;
+  -webkit-animation: hiding 3s forwards;
+}
+
+@keyframes hiding {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@-webkit-keyframes hiding {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
