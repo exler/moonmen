@@ -6,6 +6,7 @@ import os
 import json
 import argparse
 import getpass
+import hashlib
 
 # Import from project
 from moonmen.web import app
@@ -60,14 +61,15 @@ if __name__ == "__main__":
         app.run(debug=True)
     else:
         print(YELLOW + HEADER + END)
-        print("{}(!) Initialize new project...\n{}".format(YELLOW, END))
-        print("name: {}".format(args.project))
+        print("{}(!) Initialize project '{}'...\n{}".format(YELLOW, args.project, END))
         try:
             project_summary = input("description: ")
             project_repo = input("repository: ")
             project_password = getpass.getpass("password: (none) ")
 
-            new_project(args.project, project_password, project_summary, project_repo)
+            hashed_password = hashlib.sha512(project_password.encode("utf-8")).hexdigest()
+
+            new_project(args.project, hashed_password, project_summary, project_repo)
 
             print("\n\n{}(!) Project details saved.{}".format(BLUE, END))
         except KeyboardInterrupt:

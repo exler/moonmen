@@ -1,5 +1,6 @@
 # Import packages
 import os
+import hashlib
 from flask import Flask, flash, redirect, render_template, request, session
 app = Flask(__name__, static_url_path="/static")
 
@@ -27,7 +28,9 @@ def tasks():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if request.form["password"] == os.environ["PROJECT_PASSWORD"]:
+        hashed_password = hashlib.sha512(request.form["password"].encode("utf-8")).hexdigest()
+
+        if hashed_password == os.environ["PROJECT_PASSWORD"]:
             session["logged_in"] = True
         else:
             flash("Wrong password!")
