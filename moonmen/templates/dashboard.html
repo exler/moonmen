@@ -8,20 +8,45 @@
     </div>
     <section class="text-center">
     	<div class="row">
-    		<div class="col-md-3 border-right">
+    		<div class="col-md-4 border-right">
     			<h4>Info</h4>
     			<ul class="text-left list-unstyled pt-3">
     				<li><span class="font-weight-bold pr-3">Project name:</span> {{ projectname }}</li>
-    				<li><span class="font-weight-bold pr-3">Project summary:</span>{{ projectsummary }}</li>
+    				<li><span class="font-weight-bold pr-3">Project description:</span>{{ projectdesc }}</li>
     				<li><span class="font-weight-bold pr-3">Repository:</span><a href="{{ projectrepo }}">{{ projectrepo }}</a></li>
     			</ul>
     		</div>
-    		<div class="col-md-9">
+    		<div class="col-md-8 d-none d-sm-none d-md-block">
     			<h4>Calendar</h4>
-    			
+                
+                {% for event in session["events"] %}
+                    <div class="event mt-5 pt-2 pb-2 border bg-light">
+                        <div class="float-left pl-5 w-35">
+                            <h5 class="font-weight-bold">{{ event["name"] }}</h5>
+                            <p class="font-italic">{{ event["summary"] }}</p>
+                        </div>
+
+                        <div class="float-right pr-5 pt-3">
+                            <a href="/api/calendar_edit?id={{ event['id'] }}">
+                                <i data-feather="edit"></i>
+                            </a>
+                            <a href="/api/calendar_delete?id={{ event['id'] }}">
+                                <i data-feather="x-square"></i>
+                            </a>
+                        </div>
+                        <div class="text-center">
+                            <h6>Ends</h6>
+                            <h4 class="pr-5">{{ event["end_date"] }}</h4>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <a class="no-decoration" href="/api/calendar_add">
+    			    <div class="event new-event mt-5 pt-3 pb-3 border bg-light">
+                        <i data-feather="plus-circle"></i>
+                    </div>
+                </a>
     		</div>
     	</div>
     </section>
 {% endblock %}
-
-

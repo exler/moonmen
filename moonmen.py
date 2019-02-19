@@ -8,9 +8,6 @@ import argparse
 import getpass
 import hashlib
 
-# Import from project
-from moonmen.web import app
-
 # Console interface
 BLUE, RED, YELLOW, END = "\033[94m", "\033[91m", "\033[93m", "\033[0m"
 HEADER = """
@@ -20,30 +17,19 @@ HEADER = """
          """
 
 
-def new_project(project_name, project_password, project_summary, project_repo):
+def new_project(project_name, project_password, project_desc, project_repo):
     with open("storage/{}.json".format(project_name), "w") as json_file:
         project_data = {
             "password": project_password,
             "details": {
-                "summary": project_summary,
+                "description": project_desc,
                 "repository": project_repo
-            }
+            },
+            "events": {},
+            "tasks": {}
         }
 
-        json.dump(project_data, json_file, indent=4, sort_keys=True)
-
-
-def load_project(project_name):
-    with open("storage/{}.json".format(project_name)) as json_file:
-        project_data = json.load(json_file)
-        os.environ["PROJECT_NAME"] = project_name
-        os.environ["PROJECT_SUMMARY"] = project_data["details"]["summary"]
-        os.environ["PROJECT_REPO"] = project_data["details"]["repository"]
-
-        if project_data["password"] is not None:
-            os.environ["PROJECT_PASSWORD"] = project_data["password"]
-        else:
-            os.environ["PROJECT_PASSWORD"] = ""
+        json.dump(project_data, json_file, indent=4)
 
 
 if __name__ == "__main__":
@@ -55,7 +41,9 @@ if __name__ == "__main__":
     if os.path.isfile("storage/{}.json".format(args.project)):
         print(BLUE + HEADER + END)
 
-        load_project(args.project)
+        os.environ["PROJECT_NAME"] = args.project
+
+        from moonmen.web import app
 
         app.secret_key = os.urandom(24)
         app.run(debug=True)
@@ -63,14 +51,15 @@ if __name__ == "__main__":
         print(YELLOW + HEADER + END)
         print("{}(!) Initialize project '{}'...\n{}".format(YELLOW, args.project, END))
         try:
-            project_summary = input("description: ")
+            project_desc = input("description: ")
             project_repo = input("repository: ")
-            project_password = getpass.getpass("password: (none) ")
+            project_password = getpass.getpass("password: ")
 
-            hashed_password = hashlib.sha512(project_password.encode("utf-8")).hexdigest()
+            if project_password is not "":
+                project_password = hashlib.sha512(project_password.encode("utf-8")).hexdigest()
 
-            new_project(args.project, hashed_password, project_summary, project_repo)
+            new_project(args.project, project_password, project_desc, project_repo)
 
-            print("\n\n{}(!) Project details saved.{}".format(BLUE, END))
+            print("\n{}(!) Project details saved.{}".format(BLUE, END))
         except KeyboardInterrupt:
             print("\n\n{}(!) Project initialization canceled.{}".format(RED, END))

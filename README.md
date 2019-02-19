@@ -4,15 +4,11 @@
 
 ## Usage
 
-### Creating a project
-```bash
-$ python3 moonmen.py PROJECT_NAME [-p PASSWORD]
-```
-
-### Running a project
 ```bash
 $ python3 moonmen.py PROJECT_NAME
 ```
+
+*moonmen* will detect if the project exists and if not, will prompt for details about the project. On next run the web server will be launched and web interface will be available on **port 5000**.
 
 ## License
 

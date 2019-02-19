@@ -45,8 +45,7 @@
 	</div>
 
 	<script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
-	<script>
-		feather.replace()
-	</script>
+	<script>feather.replace()</script>
+	{% block scripts %}{% endblock %}
 </body>
 </html>
