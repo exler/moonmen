@@ -7,6 +7,7 @@ import json
 import argparse
 import getpass
 import hashlib
+from gevent.pywsgi import WSGIServer
 
 # Console interface
 BLUE, RED, YELLOW, END = "\033[94m", "\033[91m", "\033[93m", "\033[0m"
@@ -44,9 +45,13 @@ if __name__ == "__main__":
         os.environ["PROJECT_NAME"] = args.project
 
         from moonmen.web import app
-
         app.secret_key = os.urandom(24)
-        app.run(debug=True)
+
+        try:
+            http_server = WSGIServer(('', 5000), app)
+            http_server.serve_forever()
+        except KeyboardInterrupt:
+            print("\n\n{}(!) Closing webserver...{}".format(RED, END))
     else:
         print(YELLOW + HEADER + END)
         print("{}(!) Initialize project '{}'...\n{}".format(YELLOW, args.project, END))
