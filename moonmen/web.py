@@ -13,7 +13,7 @@ with open("storage/{}.json".format(os.environ["PROJECT_NAME"])) as json_file:
 @app.route("/")
 def dashboard():
     if session.get("logged_in") or not config["password"]:
-        session["events"] = config["events"]
+        session["tasks"] = config["tasks"]
 
         return render_template("dashboard.html",
                                projectname=os.environ["PROJECT_NAME"],
@@ -23,12 +23,10 @@ def dashboard():
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 
 
-@app.route("/tasks")
+@app.route("/resources")
 def tasks():
     if session.get("logged_in") or not config["password"]:
-        session["tasks"] = config["tasks"]
-
-        return render_template("tasks.html",
+        return render_template("resources.html",
                                projectname=os.environ["PROJECT_NAME"])
     else:
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
@@ -36,13 +34,12 @@ def tasks():
 
 @app.route("/login", methods=["POST"])
 def login():
-    if request.method == "POST":
-        hashed_password = hashlib.sha512(request.form["password"].encode("utf-8")).hexdigest()
+    hashed_password = hashlib.sha512(request.form["password"].encode("utf-8")).hexdigest()
 
-        if hashed_password == config["password"]:
-            session["logged_in"] = True
-        else:
-            flash("Wrong password!")
+    if hashed_password == config["password"]:
+        session["logged_in"] = True
+    else:
+        flash("Wrong password!")
 
     return redirect("/")
 
@@ -56,29 +53,47 @@ def logout():
     return redirect("/")
 
 # API routes
-@app.route("/api/calendar_add")
-def calendar_add():
+@app.route("/api/tasks_add", methods=["POST"])
+def tasks_add():
     if session.get("logged_in") or not config["password"]:
-        config["events"].append({"id": len(config["events"]), "name": "New Event", "summary": "Waiting to be edited...", "end_date": None})
+        if len(request.form["name-input"]) > 30 or len(request.form["description-input"]) > 50:
+            flash("Input too long!")
+        else:
+            config["tasks"].append({"id": len(config["tasks"]),
+                                    "name": request.form["name-input"],
+                                    "description": request.form["description-input"],
+                                    "status": request.form["status-select"]})
 
-        with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
-            json.dump(config, json_file, indent=4)
+            with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+                json.dump(config, json_file, indent=4)
 
     return redirect("/")
 
 
-@app.route("/api/calendar_edit")
-def calendar_edit():
+@app.route("/api/tasks_edit", methods=["POST"])
+def tasks_edit():
+    if session.get("logged_in") or not config["password"]:
+        if len(request.form["name-input"]) > 30 or len(request.form["description-input"]) > 50:
+            flash("Input too long!")
+        else:
+            for idx, val in enumerate(config["tasks"]):
+                if val["id"] == int(request.args.get("id")):
+                    config["tasks"][idx]["name"] = request.form["name-input"]
+                    config["tasks"][idx]["description"] = request.form["description-input"]
+                    config["tasks"][idx]["status"] = request.form["status-select"]
+
+            with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+                json.dump(config, json_file, indent=4)
 
     return redirect("/")
 
 
-@app.route("/api/calendar_delete")
-def calendar_delete():
+@app.route("/api/tasks_delete")
+def tasks_delete():
     if session.get("logged_in") or not config["password"]:
-        for idx, val in enumerate(config["events"]):
+        for idx, val in enumerate(config["tasks"]):
             if val["id"] == int(request.args.get("id")):
-                del config["events"][idx]
+                del config["tasks"][idx]
 
         with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
             json.dump(config, json_file, indent=4)

@@ -17,36 +17,105 @@
     			</ul>
     		</div>
     		<div class="col-md-8 d-none d-sm-none d-md-block">
-    			<h4>Calendar</h4>
+    			<h4>Tasks</h4>
                 
-                {% for event in session["events"] %}
-                    <div class="event mt-5 pt-2 pb-2 border bg-light">
+                {% for tasks in session["tasks"] %}
+                    <div class="task mt-5 pt-2 pb-2 border bg-light">
                         <div class="float-left pl-5 w-35">
-                            <h5 class="font-weight-bold">{{ event["name"] }}</h5>
-                            <p class="font-italic">{{ event["summary"] }}</p>
+                            <h5 class="font-weight-bold">{{ tasks["name"] }}</h5>
+                            <p class="font-italic">{{ tasks["description"] }}</p>
                         </div>
 
                         <div class="float-right pr-5 pt-3">
-                            <a href="/api/calendar_edit?id={{ event['id'] }}">
+                            <a data-toggle="modal" data-taskid="{{ tasks['id'] }}" data-taskname="{{ tasks['name'] }}" data-taskdescription="{{ tasks['description'] }}" data-taskstatus="{{ tasks['status'] }}" data-action="edit" href="#tasksModal">
                                 <i data-feather="edit"></i>
                             </a>
-                            <a href="/api/calendar_delete?id={{ event['id'] }}">
+                            <a href="/api/tasks_delete?id={{ tasks['id'] }}">
                                 <i data-feather="x-square"></i>
                             </a>
                         </div>
                         <div class="text-center">
-                            <h6>Ends</h6>
-                            <h4 class="pr-5">{{ event["end_date"] }}</h4>
+                            <h6>Status</h6>
+                            <h4 class="pr-5">{{ tasks["status"] }}</h4>
                         </div>
                     </div>
                 {% endfor %}
 
-                <a class="no-decoration" href="/api/calendar_add">
-    			    <div class="event new-event mt-5 pt-3 pb-3 border bg-light">
+                <a class="no-decoration" data-toggle="modal" data-action="add" href="#tasksModal">
+    			    <div class="task new-task mt-5 pt-3 pb-3 border bg-light">
                         <i data-feather="plus-circle"></i>
                     </div>
                 </a>
     		</div>
     	</div>
     </section>
+
+    <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="tasksModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-capitalize"></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="modal-form" method="POST">
+                        <div class="form-group">
+                            <label for="tasks-name-input" class="col-form-label eve">Task Name:</label>
+                            <input required type="text" class="form-control" name="name-input" maxlength="30" id="name-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="tasks-description-input" class="col-form-label">Task Description:</label>
+                            <input required type="text" class="form-control" name="description-input" maxlength="50" id="description-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="tasks-status-select" class="col-form-label">Task Status:</label>
+                            <select required class="form-control" name="status-select" id="status-select">
+                                <option value="Planned">Planned</option>
+                                <option value="Progress">In Progress</option>
+                                <option value="Paused">Paused</option>
+                                <option value="Done">Done</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" form="modal-form" class="btn btn-primary modal-action text-capitalize"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $("#tasksModal").on("show.bs.modal", function (event) {
+        let button = $(event.relatedTarget);
+        let action = button.data("action");
+        let modal = $(this);
+        let form = modal.find("#modal-form");
+
+        if(action == "edit") {
+            let tasks_id = button.data("taskid");
+            let tasks_name = button.data("taskname");
+            let tasks_description = button.data("taskdescription");
+            let tasks_status = button.data("taskstatus");
+
+            form.attr("action", "/api/tasks_edit?id=" + tasks_id);
+
+            modal.find("#name-input").val(tasks_name);
+            modal.find("#description-input").val(tasks_description);
+            modal.find("#status-select").val(tasks_status);
+        }
+        else {
+            form.attr("action", "/api/tasks_add");
+
+            modal.find("#name-input").val("");
+            modal.find("#description-input").val("");
+            modal.find("#status-input").val("Planned");
+        }
+
+        modal.find(".modal-title").text(action + " Task");
+        modal.find(".modal-action").text(action);
+    });
+</script>
 {% endblock %}

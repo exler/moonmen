@@ -128,39 +128,40 @@ main > div {
     DASHBOARD
    ------------- */
 
-.event {
+.task {
   margin: auto 5em;
   height: 74px;
 }
 
-.event a {
+.task a {
   text-decoration: none;
+  cursor: pointer;
 }
 
-.event .feather-edit {
+.task .feather-edit {
   width: 22px;
   height: 22px;
   margin-right: 12px;
 }
 
-.event .feather-x-square {
+.task .feather-x-square {
   width: 22px;
   height: 22px;
   color: #f00;
 }
 
-.new-event {
+.new-task {
   cursor: pointer;
   transition: all .3s ease-in-out;
   opacity: 0.6;
 }
 
-.new-event:hover {
+.new-task:hover {
   transform: scale(0.8);
   opacity: 1;
 }
 
-.new-event svg {
+.new-task svg {
   width: 48px;
   height: 48px;
   color: #008000;

@@ -26,8 +26,7 @@ def new_project(project_name, project_password, project_desc, project_repo):
                 "description": project_desc,
                 "repository": project_repo
             },
-            "events": {},
-            "tasks": {}
+            "tasks": []
         }
 
         json.dump(project_data, json_file, indent=4)
@@ -37,6 +36,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("project",
                         help="Name of the project to run the server for.")
+    parser.add_argument("--debug", action="store_true",
+                        help="Use Flask's built-in development server instead of Gevent.")
     args = parser.parse_args()
 
     if os.path.isfile("storage/{}.json".format(args.project)):
@@ -47,11 +48,14 @@ if __name__ == "__main__":
         from moonmen.web import app
         app.secret_key = os.urandom(24)
 
-        try:
-            http_server = WSGIServer(('', 5000), app)
-            http_server.serve_forever()
-        except KeyboardInterrupt:
-            print("\n\n{}(!) Closing webserver...{}".format(RED, END))
+        if args.debug:
+            app.run(debug=True)
+        else:
+            try:
+                http_server = WSGIServer(('', 5000), app)
+                http_server.serve_forever()
+            except KeyboardInterrupt:
+                print("\n\n{}(!) Closing webserver...{}".format(RED, END))
     else:
         print(YELLOW + HEADER + END)
         print("{}(!) Initialize project '{}'...\n{}".format(YELLOW, args.project, END))

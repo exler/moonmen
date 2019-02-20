@@ -1,6 +1,9 @@
 <h1 align="center">moonmen</h1>
 <p align="center">Pain-free project manager for small teams</p>
-<p align="center"><img src="https://img.shields.io/github/license/EXLER/moonmen.svg?style=flat-square"></p>
+<p align="center">
+	<img src="https://img.shields.io/github/license/EXLER/moonmen.svg?style=flat-square">
+	<img src="https://img.shields.io/badge/python-3.6-blue.svg?style=flat-square">
+</p>
 
 ## Requirements
 

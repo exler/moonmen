@@ -32,7 +32,7 @@
 							<a class="nav-link {% block dashboard_active %}{% endblock %}" href="/"><i data-feather="home"></i>Dashboard</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link {% block tasks_active %}{% endblock %}" href="/tasks"><i data-feather="bookmark"></i>Tasks</a>
+							<a class="nav-link {% block tasks_active %}{% endblock %}" href="/resources"><i data-feather="code"></i>Resources</a>
 						</li>
 					</ul>
 					<img class="sidebar-brand" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="moonmen Logo">
@@ -45,6 +45,9 @@
 	</div>
 
 	<script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/jquery-3.3.1.slim.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 	<script>feather.replace()</script>
 	{% block scripts %}{% endblock %}
 </body>
