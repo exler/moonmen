@@ -1,4 +1,4 @@
-<h1 align="center">moonmen</h1>
+<h1 align="center"><img width="200px" src="./moonmen/static/images/icon-text.png"></h1>
 <p align="center">Pain-free project manager for small teams</p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/EXLER/moonmen.svg?style=flat-square">
