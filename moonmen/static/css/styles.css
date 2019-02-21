@@ -120,8 +120,8 @@ main > div {
   100% { opacity: 0; }
 }
 
-.w-35 {
-  width: 35%;
+.w-40 {
+  width: 40%;
 }
 
 /* -------------
@@ -138,16 +138,10 @@ main > div {
   cursor: pointer;
 }
 
-.task .feather-edit {
+.task svg {
   width: 22px;
   height: 22px;
   margin-right: 12px;
-}
-
-.task .feather-x-square {
-  width: 22px;
-  height: 22px;
-  color: #f00;
 }
 
 .new-task {
@@ -170,4 +164,17 @@ main > div {
 .no-decoration {
   text-decoration: none;
   outline: none;
+}
+
+.no-decoration:hover {
+  text-decoration: none;
+}
+
+/* -------------
+    FILE STORAGE
+   ------------- */
+
+.file svg {
+  width: 22px;
+  height: 22px;
 }

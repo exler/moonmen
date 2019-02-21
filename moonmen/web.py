@@ -1,15 +1,24 @@
-# Import packages
+# Imports
 import os
 import json
 import hashlib
-from flask import Flask, flash, redirect, render_template, request, session
+import random
+import string
+from flask import Flask, flash, redirect, render_template, request, session, send_from_directory
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__, static_url_path="/static")
+app.config["UPLOAD_FOLDER"] = "{}/storage/{}".format(os.environ["BASEDIR"], os.environ["PROJECT_NAME"])
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10MB
 
 # Configuration file
 with open("storage/{}.json".format(os.environ["PROJECT_NAME"])) as json_file:
     config = json.load(json_file)
 
-# Routes
+
+############
+#  Routes  #
+############
 @app.route("/")
 def dashboard():
     if session.get("logged_in") or not config["password"]:
@@ -23,10 +32,30 @@ def dashboard():
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 
 
-@app.route("/resources")
+@app.route("/notes")
 def tasks():
     if session.get("logged_in") or not config["password"]:
-        return render_template("resources.html",
+        return render_template("notes.html",
+                               projectname=os.environ["PROJECT_NAME"])
+    else:
+        return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
+
+
+@app.route("/files")
+def files():
+    if session.get("logged_in") or not config["password"]:
+        session["files"] = config["files"]
+
+        return render_template("files.html",
+                               projectname=os.environ["PROJECT_NAME"])
+    else:
+        return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
+
+
+@app.route("/paste")
+def paste():
+    if session.get("logged_in") or not config["password"]:
+        return render_template("paste.html",
                                projectname=os.environ["PROJECT_NAME"])
     else:
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
@@ -52,7 +81,10 @@ def logout():
 
     return redirect("/")
 
-# API routes
+
+################
+#  API Routes  #
+################
 @app.route("/api/tasks_add", methods=["POST"])
 def tasks_add():
     if session.get("logged_in") or not config["password"]:
@@ -88,11 +120,11 @@ def tasks_edit():
     return redirect("/")
 
 
-@app.route("/api/tasks_delete")
-def tasks_delete():
+@app.route("/api/tasks_delete/<task_id>")
+def tasks_delete(task_id):
     if session.get("logged_in") or not config["password"]:
         for idx, val in enumerate(config["tasks"]):
-            if val["id"] == int(request.args.get("id")):
+            if val["id"] == int(task_id):
                 del config["tasks"][idx]
 
         with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
@@ -101,7 +133,52 @@ def tasks_delete():
     return redirect("/")
 
 
-# Error handlers
+@app.route("/api/files_upload", methods=["POST"])
+def files_upload():
+    if session.get("logged_in") or not config["password"]:
+        file = request.files["filesUpload"]
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            random_filename = "".join(random.choices(string.ascii_lowercase + string.digits, k=8)) + "." + filename.rsplit('.', 1)[1].lower()
+
+            config["files"].append({"id": len(config["files"]),
+                                    "original_filename": filename,
+                                    "random_filename": random_filename})
+
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], random_filename))
+
+            with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+                json.dump(config, json_file, indent=4)
+        else:
+            flash("Wrong filetype!")
+
+    return redirect("/files")
+
+
+@app.route("/api/files_download/<filename>")
+def files_download(filename):
+    if session.get("logged_in") or not config["password"]:
+        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+
+@app.route("/api/files_delete/<file_id>")
+def files_delete(file_id):
+    if session.get("logged_in") or not config["password"]:
+        for idx, val in enumerate(config["files"]):
+            if val["id"] == int(file_id):
+                os.remove(os.path.join(app.config["UPLOAD_FOLDER"], config["files"][idx]["random_filename"]))
+                del config["files"][idx]
+
+        with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+            json.dump(config, json_file, indent=4)
+
+    return redirect("/files")
+
+
+##################
+# Error handlers #
+##################
 @app.errorhandler(404)
 def page_not_found(e):
     flash("Not found! Please check the URL and try again.")
@@ -112,3 +189,17 @@ def page_not_found(e):
 def method_not_allowed(e):
     flash("Method not allowed! Please do not type URLs manually.")
     return redirect("/")
+
+
+@app.errorhandler(413)
+def request_entity_too_large(e):
+    flash("File submitted exceeded maximum limit.")
+    return redirect("/files")
+
+
+#############
+# Functions #
+#############
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in config["file_extensions"]

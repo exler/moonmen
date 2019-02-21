@@ -18,7 +18,9 @@ HEADER = """
          """
 
 
-def new_project(project_name, project_password, project_desc, project_repo):
+def create_project(project_name, project_password, project_desc, project_repo):
+    os.mkdir("storage/{}".format(project_name))
+
     with open("storage/{}.json".format(project_name), "w") as json_file:
         project_data = {
             "password": project_password,
@@ -26,7 +28,9 @@ def new_project(project_name, project_password, project_desc, project_repo):
                 "description": project_desc,
                 "repository": project_repo
             },
-            "tasks": []
+            "tasks": [],
+            "file_extensions": ["txt", "pdf", "png", "jpg", "jpeg", "gif", "zip"],
+            "files": []
         }
 
         json.dump(project_data, json_file, indent=4)
@@ -36,6 +40,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("project",
                         help="Name of the project to run the server for.")
+    parser.add_argument("-p", "--port", default=8080, type=int,
+                        help="Available port to run the web server on.")
     parser.add_argument("--debug", action="store_true",
                         help="Use Flask's built-in development server instead of Gevent.")
     args = parser.parse_args()
@@ -44,15 +50,17 @@ if __name__ == "__main__":
         print(BLUE + HEADER + END)
 
         os.environ["PROJECT_NAME"] = args.project
+        os.environ["BASEDIR"] = os.path.abspath(os.path.dirname(__file__))
 
         from moonmen.web import app
         app.secret_key = os.urandom(24)
 
         if args.debug:
-            app.run(debug=True)
+            app.run(debug=True, port=args.port)
         else:
             try:
-                http_server = WSGIServer(('', 5000), app)
+                print("Listening for requests on port {}...\n\n".format(args.port))
+                http_server = WSGIServer(('', args.port), app)
                 http_server.serve_forever()
             except KeyboardInterrupt:
                 print("\n\n{}(!) Closing webserver...{}".format(RED, END))
@@ -67,7 +75,7 @@ if __name__ == "__main__":
             if project_password is not "":
                 project_password = hashlib.sha512(project_password.encode("utf-8")).hexdigest()
 
-            new_project(args.project, project_password, project_desc, project_repo)
+            create_project(args.project, project_password, project_desc, project_repo)
 
             print("\n{}(!) Project details saved.{}".format(BLUE, END))
         except KeyboardInterrupt:
