@@ -30,7 +30,8 @@ def create_project(project_name, project_password, project_desc, project_repo):
             },
             "tasks": [],
             "file_extensions": ["txt", "pdf", "png", "jpg", "jpeg", "gif", "zip"],
-            "files": []
+            "files": [],
+            "notes": []
         }
 
         json.dump(project_data, json_file, indent=4)

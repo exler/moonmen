@@ -35,6 +35,8 @@ def dashboard():
 @app.route("/notes")
 def tasks():
     if session.get("logged_in") or not config["password"]:
+        session["notes"] = config["notes"]
+
         return render_template("notes.html",
                                projectname=os.environ["PROJECT_NAME"])
     else:
@@ -81,9 +83,11 @@ def tasks_add():
     if session.get("logged_in") or not config["password"]:
         if len(request.form["name-input"]) > 30 or len(request.form["description-input"]) > 50:
             flash("Input too long!")
+        elif len(request.form["name-input"]) == 0 or len(request.form["description-input"]) == 0:
+            flash("Input too short!")
         else:
-            config["tasks"].append({"id": len(config["tasks"]),
-                                    "name": request.form["name-input"],
+            config["tasks"].append({"id": random_unique_id("tasks"),
+                                    "title": request.form["name-input"],
                                     "description": request.form["description-input"],
                                     "status": request.form["status-select"]})
 
@@ -101,7 +105,7 @@ def tasks_edit():
         else:
             for idx, val in enumerate(config["tasks"]):
                 if val["id"] == int(request.args.get("id")):
-                    config["tasks"][idx]["name"] = request.form["name-input"]
+                    config["tasks"][idx]["title"] = request.form["name-input"]
                     config["tasks"][idx]["description"] = request.form["description-input"]
                     config["tasks"][idx]["status"] = request.form["status-select"]
 
@@ -124,6 +128,56 @@ def tasks_delete(task_id):
     return redirect("/")
 
 
+@app.route("/api/notes_add", methods=["POST"])
+def notes_add():
+    if session.get("logged_in") or not config["password"]:
+        if len(request.form["title-input"]) > 30 or len(request.form["content-input"]) > 400:
+            flash("Input too long!")
+        elif len(request.form["title-input"]) == 0 or len(request.form["content-input"]) == 0:
+            flash("Input too short!")
+        else:
+            config["notes"].append({"id": random_unique_id("notes"),
+                                    "title": request.form["title-input"],
+                                    "content": request.form["content-input"]})
+
+            with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+                json.dump(config, json_file, indent=4)
+
+    return redirect("/notes")
+
+
+@app.route("/api/notes_edit", methods=["POST"])
+def notes_edit():
+    if session.get("logged_in") or not config["password"]:
+        if len(request.form["title-input"]) > 30 or len(request.form["content-input"]) > 400:
+            flash("Input too long!")
+        elif len(request.form["title-input"]) == 0 or len(request.form["content-input"]) == 0:
+            flash("Input too short!")
+        else:
+            for idx, val in enumerate(config["notes"]):
+                if val["id"] == int(request.args.get("id")):
+                    config["notes"][idx]["title"] = request.form["title-input"]
+                    config["notes"][idx]["content"] = request.form["content-input"]
+
+            with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+                json.dump(config, json_file, indent=4)
+
+    return redirect("/notes")
+
+
+@app.route("/api/notes_delete/<note_id>")
+def notes_delete(note_id):
+    if session.get("logged_in") or not config["password"]:
+        for idx, val in enumerate(config["notes"]):
+            if val["id"] == int(note_id):
+                del config["notes"][idx]
+
+        with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
+            json.dump(config, json_file, indent=4)
+
+    return redirect("/notes")
+
+
 @app.route("/api/files_upload", methods=["POST"])
 def files_upload():
     if session.get("logged_in") or not config["password"]:
@@ -133,7 +187,7 @@ def files_upload():
             filename = secure_filename(file.filename)
             random_filename = "".join(random.choices(string.ascii_lowercase + string.digits, k=8)) + "." + filename.rsplit('.', 1)[1].lower()
 
-            config["files"].append({"id": len(config["files"]),
+            config["files"].append({"id": random_unique_id("files"),
                                     "original_filename": filename,
                                     "random_filename": random_filename})
 
@@ -194,3 +248,13 @@ def request_entity_too_large(e):
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in config["file_extensions"]
+
+
+def random_unique_id(json_object_name):
+    number = random.randint(1, 10000)
+
+    for val in config[json_object_name]:
+        if val["id"] == number:
+            number = random.randint(1, 10000)
+
+    return number

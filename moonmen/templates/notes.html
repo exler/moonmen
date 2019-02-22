@@ -6,8 +6,88 @@
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
         <h2>Notes</h2>
         <div class="btn-toolbar mb-2 mb-md-0">
-            <button type="button" class="btn btn-sm btn-outline-secondary"><i data-feather="edit-2"></i>   Add</button>
+            <button type="button" data-toggle="modal" data-target="#notesModal" data-action="add" class="btn btn-sm btn-outline-secondary">
+            	<i data-feather="plus-square"></i>   Add
+            </button>
+        </div>
+    </div>
+    <section class="ml-5 d-none d-sm-none d-md-block">
+    		{% for note in session["notes"] %}
+    		<div class="card d-inline-block mb-2">
+                <div class="card-body">
+                    <div class="card-title text-center border-bottom">
+    				    <h4>{{ note["title"] }}</h4>
+                    </div>
+                    <div class="card-text">
+    				    <p>{{ note["content"] }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+    				    <a class="mr-5 no-decoration" data-toggle="modal" data-noteid="{{ note['id'] }}" data-notetitle="{{ note['title'] }}" data-notecontent="{{ note['content'] }}" data-action="edit" href="#notesModal">
+                    	   <i data-feather="edit"></i>
+                        </a>
+                        <a class="ml-5 text-danger" href="/api/notes_delete/{{ note['id'] }}">
+                    	   <i data-feather="x-square"></i>
+                        </a>
+                    </div>
+                </div>
+    		</div>
+    	{% endfor %}
+    </section>
+
+    <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="notesModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-capitalize"></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="modal-form" method="POST">
+                        <div class="form-group">
+                            <label for="title-input" class="col-form-label">Note Title:</label>
+                            <input required type="text" class="form-control" name="title-input" maxlength="30" id="title-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="content-input" class="col-form-label">Note Content:</label>
+                            <textarea required class="form-control" name="content-input" maxlength="400" id="content-input"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" form="modal-form" class="btn btn-primary modal-action text-capitalize"></button>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 
+{% block scripts %}
+<script>
+    $("#notesModal").on("show.bs.modal", function (event) {
+        let button = $(event.relatedTarget);
+        let action = button.data("action");
+        let modal = $(this);
+        let form = modal.find("#modal-form");
+
+        if(action == "edit") {
+            let note_id = button.data("noteid");
+            let note_title = button.data("notetitle");
+            let note_content = button.data("notecontent");
+
+            form.attr("action", "/api/notes_edit?id=" + note_id);
+
+            modal.find("#title-input").val(note_title);
+            modal.find("#content-input").val(note_content);
+        }
+        else {
+            form.attr("action", "/api/notes_add");
+
+            modal.find("#title-input").val("");
+            modal.find("#content-input").val("");
+        }
+
+        modal.find(".modal-title").text(action + " Note");
+        modal.find(".modal-action").text(action);
+    });
+</script>
+{% endblock %}
