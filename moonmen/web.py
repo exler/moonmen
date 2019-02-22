@@ -52,15 +52,6 @@ def files():
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 
 
-@app.route("/paste")
-def paste():
-    if session.get("logged_in") or not config["password"]:
-        return render_template("paste.html",
-                               projectname=os.environ["PROJECT_NAME"])
-    else:
-        return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
-
-
 @app.route("/login", methods=["POST"])
 def login():
     hashed_password = hashlib.sha512(request.form["password"].encode("utf-8")).hexdigest()

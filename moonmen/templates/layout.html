@@ -37,10 +37,16 @@
 							<a class="nav-link {% block notes_active %}{% endblock %}" href="/notes"><i data-feather="file-text"></i>Notes</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link {% block paste_active %}{% endblock %}" href="/paste"><i data-feather="code"></i>Code</a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link {% block files_active %}{% endblock %}" href="/files"><i data-feather="cloud"></i>File Storage</a>
+						</li>
+					</ul>
+					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+						External Tools
+						<i data-feather="link-2"></i>
+					</h6>
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link" title="Hastebin.com" href="https://hastebin.com"><i data-feather="code"></i>Code Hosting</a>
 						</li>
 					</ul>
 					<img class="sidebar-brand" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="moonmen Logo">
