@@ -6,8 +6,8 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-Flask = ">=1.0.2"
-gevent = ">=1.4.0"
+Flask = "*"
+gevent = "*"
 
 [requires]
 python_version = "3.6"
