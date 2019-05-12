@@ -81,10 +81,14 @@ def logout():
 @app.route("/api/tasks_add", methods=["POST"])
 def tasks_add():
     if session.get("logged_in") or not config["password"]:
+        allowed_selections = ["Planned", "In Progress", "Paused", "Completed"]
+
         if len(request.form["name-input"]) > 30 or len(request.form["description-input"]) > 50:
             flash("Input too long!")
         elif len(request.form["name-input"]) == 0 or len(request.form["description-input"]) == 0:
             flash("Input too short!")
+        elif request.form["status-select"] not in allowed_selections:
+            flash("Not allowed status selected!")
         else:
             config["tasks"].append({"id": random_unique_id("tasks"),
                                     "title": request.form["name-input"],
@@ -100,8 +104,14 @@ def tasks_add():
 @app.route("/api/tasks_edit", methods=["POST"])
 def tasks_edit():
     if session.get("logged_in") or not config["password"]:
+        allowed_selections = ["Planned", "In Progress", "Paused", "Completed"]
+
         if len(request.form["name-input"]) > 30 or len(request.form["description-input"]) > 50:
             flash("Input too long!")
+        elif len(request.form["name-input"]) == 0 or len(request.form["description-input"]) == 0:
+            flash("Input too short!")
+        elif request.form["status-select"] not in allowed_selections:
+            flash("Not allowed status selected!")
         else:
             for idx, val in enumerate(config["tasks"]):
                 if val["id"] == int(request.args.get("id")):
