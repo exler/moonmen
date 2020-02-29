@@ -7,9 +7,9 @@
 
 ## Requirements
 
-* Python 3.6
-* Flask 1.0.2 *or greater*
-* Gevent 1.4.0 *or greater*
+* Python >=3.6
+* Flask >=1.0.2
+* Gevent >=1.4.0
 
 ## Installation
 
@@ -20,7 +20,7 @@ $ pip install -r requirements.txt
 ## Usage
 
 ```bash
-$ python3 moonmen.py project [-p | --port 8080] [--debug]
+$ python moonmen.py project [-p | --port 8080] [--debug]
 ```
 
 *moonmen* will detect if the project exists and if not, the user will be prompted for details about the project.  
