@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Import packages
-import os
-import json
 import argparse
 import getpass
 import hashlib
+import json
+
+# Import packages
+import os
+
 from gevent.pywsgi import WSGIServer
 
 # Console interface
@@ -24,14 +26,11 @@ def create_project(project_name, project_password, project_desc, project_repo):
     with open("storage/{}.json".format(project_name), "w") as json_file:
         project_data = {
             "password": project_password,
-            "details": {
-                "description": project_desc,
-                "repository": project_repo
-            },
+            "details": {"description": project_desc, "repository": project_repo},
             "tasks": [],
             "file_extensions": ["txt", "pdf", "png", "jpg", "jpeg", "gif", "zip"],
             "files": [],
-            "notes": []
+            "notes": [],
         }
 
         json.dump(project_data, json_file, indent=4)
@@ -39,12 +38,11 @@ def create_project(project_name, project_password, project_desc, project_repo):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("project",
-                        help="Name of the project to run the server for.")
-    parser.add_argument("-p", "--port", default=8080, type=int,
-                        help="Available port to run the web server on.")
-    parser.add_argument("--debug", action="store_true",
-                        help="Use Flask's built-in development server instead of Gevent.")
+    parser.add_argument("project", help="Name of the project to run the server for.")
+    parser.add_argument("-p", "--port", default=8080, type=int, help="Available port to run the web server on.")
+    parser.add_argument(
+        "--debug", action="store_true", help="Use Flask's built-in development server instead of Gevent."
+    )
     args = parser.parse_args()
 
     if os.path.isfile("storage/{}.json".format(args.project)):
@@ -54,6 +52,7 @@ if __name__ == "__main__":
         os.environ["BASEDIR"] = os.path.abspath(os.path.dirname(__file__))
 
         from moonmen.web import app
+
         app.secret_key = os.urandom(24)
 
         if args.debug:
@@ -61,7 +60,7 @@ if __name__ == "__main__":
         else:
             try:
                 print("Listening for requests on port {}...\n\n".format(args.port))
-                http_server = WSGIServer(('', args.port), app)
+                http_server = WSGIServer(("", args.port), app)
                 http_server.serve_forever()
             except KeyboardInterrupt:
                 print("\n\n{}(!) Closing webserver...{}".format(RED, END))
@@ -72,9 +71,7 @@ if __name__ == "__main__":
             project_desc = input("description: ")
             project_repo = input("repository: ")
             project_password = getpass.getpass("password: ")
-
-            if project_password is not "":
-                project_password = hashlib.sha512(project_password.encode("utf-8")).hexdigest()
+            project_password = hashlib.sha512(project_password.encode("utf-8")).hexdigest()
 
             create_project(args.project, project_password, project_desc, project_repo)
 

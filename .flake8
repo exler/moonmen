@@ -1,0 +1,15 @@
+[flake8]
+filename = 
+    *.py,
+
+exclude = 
+    .git,
+    __pycache__
+
+ignore = 
+    # See https://github.com/PyCQA/pycodestyle/issues/373
+    E203,
+    # See https://www.flake8rules.com/rules/W503.html
+    W503
+
+max_line_length = 120

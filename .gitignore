@@ -6,6 +6,9 @@ instance/*
 !instance/.gitignore
 .webassets-cache
 
+### Visual Studio Code ###
+.vscode/
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 *.py[cod]

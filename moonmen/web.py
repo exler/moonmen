@@ -1,10 +1,18 @@
-# Imports
-import os
-import json
 import hashlib
+import json
+import os
 import random
 import string
-from flask import Flask, flash, redirect, render_template, request, session, send_from_directory
+
+from flask import (
+    Flask,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    session,
+)
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_url_path="/static")
@@ -24,10 +32,12 @@ def dashboard():
     if session.get("logged_in") or not config["password"]:
         session["tasks"] = config["tasks"]
 
-        return render_template("dashboard.html",
-                               projectname=os.environ["PROJECT_NAME"],
-                               projectdesc=config["details"]["description"],
-                               projectrepo=config["details"]["repository"])
+        return render_template(
+            "dashboard.html",
+            projectname=os.environ["PROJECT_NAME"],
+            projectdesc=config["details"]["description"],
+            projectrepo=config["details"]["repository"],
+        )
     else:
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 
@@ -37,8 +47,7 @@ def tasks():
     if session.get("logged_in") or not config["password"]:
         session["notes"] = config["notes"]
 
-        return render_template("notes.html",
-                               projectname=os.environ["PROJECT_NAME"])
+        return render_template("notes.html", projectname=os.environ["PROJECT_NAME"])
     else:
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 
@@ -48,8 +57,7 @@ def files():
     if session.get("logged_in") or not config["password"]:
         session["files"] = config["files"]
 
-        return render_template("files.html",
-                               projectname=os.environ["PROJECT_NAME"])
+        return render_template("files.html", projectname=os.environ["PROJECT_NAME"])
     else:
         return render_template("login.html", projectname=os.environ["PROJECT_NAME"])
 
@@ -90,10 +98,14 @@ def tasks_add():
         elif request.form["status-select"] not in allowed_selections:
             flash("Not allowed status selected!")
         else:
-            config["tasks"].append({"id": random_unique_id("tasks"),
-                                    "title": request.form["name-input"],
-                                    "description": request.form["description-input"],
-                                    "status": request.form["status-select"]})
+            config["tasks"].append(
+                {
+                    "id": random_unique_id("tasks"),
+                    "title": request.form["name-input"],
+                    "description": request.form["description-input"],
+                    "status": request.form["status-select"],
+                }
+            )
 
             with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
                 json.dump(config, json_file, indent=4)
@@ -146,9 +158,13 @@ def notes_add():
         elif len(request.form["title-input"]) == 0 or len(request.form["content-input"]) == 0:
             flash("Input too short!")
         else:
-            config["notes"].append({"id": random_unique_id("notes"),
-                                    "title": request.form["title-input"],
-                                    "content": request.form["content-input"]})
+            config["notes"].append(
+                {
+                    "id": random_unique_id("notes"),
+                    "title": request.form["title-input"],
+                    "content": request.form["content-input"],
+                }
+            )
 
             with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
                 json.dump(config, json_file, indent=4)
@@ -195,11 +211,15 @@ def files_upload():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            random_filename = "".join(random.choices(string.ascii_lowercase + string.digits, k=8)) + "." + filename.rsplit('.', 1)[1].lower()
+            random_filename = (
+                "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
+                + "."
+                + filename.rsplit(".", 1)[1].lower()
+            )
 
-            config["files"].append({"id": random_unique_id("files"),
-                                    "original_filename": filename,
-                                    "random_filename": random_filename})
+            config["files"].append(
+                {"id": random_unique_id("files"), "original_filename": filename, "random_filename": random_filename}
+            )
 
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], random_filename))
 
@@ -256,15 +276,15 @@ def request_entity_too_large(e):
 # Functions #
 #############
 def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in config["file_extensions"]
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in config["file_extensions"]
 
 
 def random_unique_id(json_object_name):
-    number = random.randint(1, 10000)
+    cryptogen = random.SystemRandom()
+    number = cryptogen.randint(1, 10000)
 
     for val in config[json_object_name]:
         if val["id"] == number:
-            number = random.randint(1, 10000)
+            number = cryptogen.randint(1, 10000)
 
     return number
