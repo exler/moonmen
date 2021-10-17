@@ -1,35 +1,43 @@
-<h1 align="center"><img width="200px" src="./moonmen/static/images/icon-text.png" alt="moonmen"></h1>
-<p align="center">Pain-free selfhosted project manager for small teams.</p>
+<p align="center">
+	<img width="200px" src="moonmen/static/images/icon-text.png" alt="moonmen">
+</p>
+<p align="center">Pain-free self-hosted project management app for small teams</p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/EXLER/moonmen.svg?style=flat-square">
-	<img src="https://img.shields.io/badge/python-3.6-blue.svg?style=flat-square">
 </p>
 
 ## Requirements
 
-* Python >=3.6
-* Flask >=1.0.2
-* Gevent >=1.4.0
+* Python >= 3.6
+* Flask >= 2.0.2
 
 ## Installation
 
 ```bash
-$ pip install -r requirements.txt
+$ poetry install
 ```
 
 ## Usage
 
 ```bash
-$ python moonmen.py project [-p | --port 8080] [--debug]
+$ export FLASK_APP=moonmen
+
+# Initialize SQLite database
+$ flask init-db
+
+# Initialize project (instance)
+$ flask init-project <project_name>
+
+# Run using Flask's development server
+$ flask run
 ```
 
-*moonmen* will detect if the project exists and if not, the user will be prompted for details about the project.  
-Choose the password wisely, it **cannot be changed**.
+*moonmen* will detect if the project exists and if not, the user will be prompted for details about the project.
 
 If ran again with the same command, the web interface will be made available.
 
 ## License
 
-Copyright (c) 2019 by ***Kamil Marut***.
+Copyright (c) 2019-2021 by ***Kamil Marut***.
 
-*moonmen* is under the terms of the [GPLv3 License](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)), following all clarifications stated in the [license file](LICENSE).
+*moonmen* is under the terms of the [MIT License](https://tldrlegal.com/license/mit-license), following all clarifications stated in the [license file](LICENSE).

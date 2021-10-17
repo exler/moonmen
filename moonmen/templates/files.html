@@ -6,24 +6,24 @@
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
         <h2>File Storage</h2>
         <div class="btn-toolbar mb-2 mb-md-0">
-        	<form id="formUpload" action="/api/files_upload" method="POST" enctype="multipart/form-data">
-        		<input hidden name="filesUpload" type="file" id="filesUpload">
-            	<button type="button" id="buttonUpload" class="btn btn-sm btn-outline-secondary"><i data-feather="upload"></i>   Upload</button>
+        	<form id="upload-form" action="{{ url_for('files.upload') }}" method="POST" enctype="multipart/form-data">
+        		<input hidden name="file" type="file" id="file-upload">
+            	<button type="button" id="upload-button" class="btn btn-sm btn-outline-secondary"><i data-feather="upload"></i>   Upload</button>
         	</form>
         </div>
     </div>
     <section>
     	<div class="row">
-    		{% for file in session["files"] %}
+    		{% for file in files %}
             <div class="file col-md-10 offset-md-1 border pt-1 pb-1 mb-3 bg-light">
 				<div class="float-left">
-					<h4>{{ file["original_filename"] }}</h4>
+					<h4>{{ file["name"] }}</h4>
 				</div>
 				<div class="float-right mt-2 pr-5">
-					<a class="no-decoration pr-3" href="/api/files_download/{{ file['random_filename'] }}">
+					<a class="no-decoration pr-3" href="{{ url_for('files.download', file_id=file['id']) }}">
                         <i data-feather="download"></i> Download
                     </a>
-                    <a class="no-decoration text-danger" href="/api/files_delete/{{ file['id'] }}">
+                    <a class="no-decoration text-danger" href="{{ url_for('files.delete', file_id=file['id']) }}">
                         <i data-feather="x-square"></i> Delete
                     </a>
 				</div>
@@ -35,12 +35,12 @@
 
 {% block scripts %}
 	<script>
-		$("#buttonUpload").click(function() {
-			$("#filesUpload").click();
+		$("#upload-button").click(function() {
+			$("#file-upload").click();
 		});
 
-		$("#filesUpload").change(function() {
-			$("#formUpload").submit();
+		$("#file-upload").change(function() {
+			$("#upload-form").submit();
 		});
 
 	</script>

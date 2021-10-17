@@ -1,5 +1,5 @@
 ### moonmen ###
-storage/*
+uploads/
 
 ### Flask ###
 instance/*

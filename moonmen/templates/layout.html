@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{ projectname }} | {% block title %}{% endblock %}</title>
+	<title>{{ session["instance_name"] }} | {% block title %}{% endblock %}</title>
 
 	<link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 
@@ -17,7 +17,7 @@
 	{% endfor %}
 
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">{{ projectname }}</a>
+		<a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">{{ session["instance_name"] }}</a>
 		<ul class="navbar-nav px-3">
 			<li class="nav-item text-nowrap">
 				{% if session["logged_in"] is defined %}<a class="nav-link" href="/logout">Logout</a>{% endif %}
@@ -31,13 +31,13 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link {% block dashboard_active %}{% endblock %}" href="/"><i data-feather="home"></i>Dashboard</a>
+							<a class="nav-link {% block dashboard_active %}{% endblock %}" href="{{ url_for('dashboard.index') }}"><i data-feather="home"></i>Dashboard</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link {% block notes_active %}{% endblock %}" href="/notes"><i data-feather="file-text"></i>Notes</a>
+							<a class="nav-link {% block notes_active %}{% endblock %}" href="{{ url_for('notes.index') }}"><i data-feather="file-text"></i>Notes</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link {% block files_active %}{% endblock %}" href="/files"><i data-feather="cloud"></i>Files</a>
+							<a class="nav-link {% block files_active %}{% endblock %}" href="{{ url_for('files.index') }}"><i data-feather="cloud"></i>Files</a>
 						</li>
 					</ul>
 					<img class="sidebar-brand" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="moonmen Logo">
