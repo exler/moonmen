@@ -179,6 +179,12 @@ main > div {
   height: 22px;
 }
 
+.file.bg-light:active, .file.bg-light:focus
+{
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+}
 
 /* -------------
       NOTES

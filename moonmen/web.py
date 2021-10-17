@@ -163,6 +163,7 @@ def notes_add():
                     "id": random_unique_id("notes"),
                     "title": request.form["title-input"],
                     "content": request.form["content-input"],
+                    "language": request.form["language-input"]
                 }
             )
 
@@ -184,6 +185,7 @@ def notes_edit():
                 if val["id"] == int(request.args.get("id")):
                     config["notes"][idx]["title"] = request.form["title-input"]
                     config["notes"][idx]["content"] = request.form["content-input"]
+                    config["notes"][idx]["language"] = request.form["language-input"]
 
             with open("storage/{}.json".format(os.environ["PROJECT_NAME"]), "w") as json_file:
                 json.dump(config, json_file, indent=4)
