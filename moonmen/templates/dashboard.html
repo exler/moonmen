@@ -11,15 +11,25 @@
     		<div class="col-md-3 border-right">
     			<h4>Info</h4>
     			<ul class="text-left list-unstyled pt-3">
-    				<li><span class="font-weight-bold pr-3">Project name:</span> {{ projectname }}</li>
-    				<li><span class="font-weight-bold pr-3">Project description:</span>{{ projectdesc }}</li>
-    				<li><span class="font-weight-bold pr-3">Repository:</span><a href="{{ projectrepo }}">{{ projectrepo }}</a></li>
+    				<li>
+                        <span class="font-weight-bold pr-3">Project name:</span> {{ session["instance_name"] }}
+                    </li>
+                    {% if instance_desc %}
+    				<li>
+                        <span class="font-weight-bold pr-3">Project description:</span>{{ instance_desc }}
+                    </li>
+                    {% endif %}
+    				{% if instance_repo %}
+                    <li>
+                        <span class="font-weight-bold pr-3">Repository:</span><a href="{{ instance_repo }}">{{ instance_repo }}</a>
+                    </li>
+                    {% endif %}
     			</ul>
     		</div>
     		<div class="col-md-9 d-none d-sm-none d-md-block">
     			<h4>Tasks</h4>
                 
-                {% for task in session["tasks"] %}
+                {% for task in tasks %}
                 <div class="task mt-5 pt-2 pb-2 border bg-light">
                     <div class="float-left pl-5 w-40">
                         <h5 class="font-weight-bold">{{ task["title"] }}</h5>
@@ -27,16 +37,16 @@
                     </div>
 
                     <div class="float-right pr-5 pt-3">
-                        <a data-toggle="modal" data-taskid="{{ task['id'] }}" data-taskname="{{ task['title'] }}" data-taskdescription="{{ task['description'] }}" data-taskstatus="{{ task['status'] }}" data-action="edit" href="#tasksModal">
+                        <a data-toggle="modal" data-taskid="{{ task['id'] }}" data-tasktitle="{{ task['title'] }}" data-taskdescription="{{ task['description'] }}" data-taskstatus="{{ task['status'] }}" data-action="edit" href="#tasksModal">
                             <i data-feather="edit"></i>
                         </a>
-                        <a class="text-danger" href="/api/tasks_delete/{{ task['id'] }}">
+                        <a class="text-danger" href="{{ url_for('dashboard.delete', task_id=task['id']) }}">
                             <i data-feather="x-square"></i>
                         </a>
                     </div>
                     <div class="text-center">
                         <h6>Status</h6>
-                        <h4 class="pr-5">{{ task["status"] }}</h4>
+                        <h4 class="pr-5">{{ get_status_name(task["status"]) }}</h4>
                     </div>
                 </div>
                 {% endfor %}
@@ -59,20 +69,19 @@
                 <div class="modal-body">
                     <form id="modal-form" method="POST">
                         <div class="form-group">
-                            <label for="tasks-name-input" class="col-form-label eve">Task Title:</label>
-                            <input required type="text" class="form-control" name="name-input" maxlength="30" id="name-input">
+                            <label for="name-input" class="col-form-label eve">Task Title:</label>
+                            <input required type="text" class="form-control" name="title" maxlength="128" id="title-input">
                         </div>
                         <div class="form-group">
-                            <label for="tasks-description-input" class="col-form-label">Task Description:</label>
-                            <input required type="text" class="form-control" name="description-input" maxlength="50" id="description-input">
+                            <label for="description-input" class="col-form-label">Task Description:</label>
+                            <input required type="text" class="form-control" name="description" maxlength="512" id="description-input">
                         </div>
                         <div class="form-group">
-                            <label for="tasks-status-select" class="col-form-label">Task Status:</label>
-                            <select required class="form-control" name="status-select" id="status-select">
-                                <option value="Planned">Planned</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Paused">Paused</option>
-                                <option value="Completed">Completed</option>
+                            <label for="status-select" class="col-form-label">Task Status:</label>
+                            <select required class="form-control" name="status" id="status-select">
+                                {% for status in statuses %}
+                                <option value="{{ status[0] }}">{{ status[1] }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </form>
@@ -95,23 +104,23 @@
         let form = modal.find("#modal-form");
 
         if(action == "edit") {
-            let tasks_id = button.data("taskid");
-            let tasks_name = button.data("taskname");
-            let tasks_description = button.data("taskdescription");
-            let tasks_status = button.data("taskstatus");
+            let task_id = button.data("taskid");
+            let task_title = button.data("tasktitle");
+            let task_description = button.data("taskdescription");
+            let task_status = button.data("taskstatus");
 
-            form.attr("action", "/api/tasks_edit?id=" + tasks_id);
+            form.attr("action", "{{ url_for('dashboard.edit', task_id=-1) }}".replace("-1", task_id))
 
-            modal.find("#name-input").val(tasks_name);
-            modal.find("#description-input").val(tasks_description);
-            modal.find("#status-select").val(tasks_status);
+            modal.find("#title-input").val(task_title);
+            modal.find("#description-input").val(task_description);
+            modal.find("#status-select").val(task_status);
         }
         else {
-            form.attr("action", "/api/tasks_add");
+            form.attr("action", "{{ url_for('dashboard.add') }}");
 
             modal.find("#name-input").val("");
             modal.find("#description-input").val("");
-            modal.find("#status-input").val("Planned");
+            modal.find("#status-select").val(1);
         }
 
         modal.find(".modal-title").text(action + " Task");

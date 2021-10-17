@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{ projectname }} | Login</title>
+	<title>Login</title>
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
@@ -11,13 +11,13 @@
 </head>
 <body>
 	{% for message in get_flashed_messages() %}
-		<div class="alert alert-danger">{{ message }}</div>
+		<div class="alert alert-info">{{ message }}</div>
 	{% endfor %}
 
 	<div class="container">
 		<form class="form-signin" action="/login" method="POST">
-			<h2 class="mb-3">{{ projectname }}</h2>
-			<input class="form-control" name="password" type="password" placeholder="Password" autofocus>
+			<input class="form-control" name="instance" type="text" placeholder="Instance Name" autofocus>
+			<input class="form-control mt-2" name="password" type="password" placeholder="Password">
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
 			<img class="mb-4" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="Moonmen">
 		</form>
