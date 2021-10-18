@@ -10,6 +10,7 @@
 	<!-- CSS -->
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+	{% block styles %}{% endblock%}
 </head>
 <body>
 	{% for message in get_flashed_messages() %}
@@ -20,7 +21,7 @@
 		<a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">{{ session["instance_name"] }}</a>
 		<ul class="navbar-nav px-3">
 			<li class="nav-item text-nowrap">
-				{% if session["logged_in"] is defined %}<a class="nav-link" href="/logout">Logout</a>{% endif %}
+				<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
 			</li>
 		</ul>
 	</nav>

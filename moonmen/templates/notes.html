@@ -2,6 +2,10 @@
 {% block title %}Notes{% endblock %}
 {% block notes_active %}active{% endblock %}
 
+{% block styles%}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/prism.css') }}">
+{% endblock %}
+
 {% block content %}
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
         <h2>Notes</h2>
@@ -11,27 +15,27 @@
             </button>
         </div>
     </div>
-    <section class="ml-5 d-none d-sm-none d-md-block">
-    		{% for note in notes %}
-    		<div class="card d-inline-block mb-2">
-                <div class="card-body">
-                    <div class="card-title text-center border-bottom">
-    				    <h4>{{ note["title"] }}</h4>
-                    </div>
-                    <div class="card-text">
-    				    <p>{{ note["content"] }}</p>
-                    </div>
-                    <div class="card-footer text-center">
-    				    <a class="mr-5 no-decoration" data-toggle="modal" data-noteid="{{ note['id'] }}" data-notetitle="{{ note['title'] }}" data-notecontent="{{ note['content'] }}" data-action="edit" href="#notesModal">
-                    	   <i data-feather="edit"></i>
-                        </a>
-                        <a class="ml-5 text-danger" href="{{ url_for('notes.delete', note_id=note['id']) }}">
-                    	   <i data-feather="x-square"></i>
-                        </a>
-                    </div>
-                </div>
-    		</div>
+    <section>
+        <div class="row">
+    	{% for note in notes %}
+        <button class="note col-md-10 offset-md-1 border pt-2 pb-1 mb-2 bg-light" type="button" data-toggle="collapse" data-target="#note-text-{{ note['id'] }}">
+            <div class="float-left">
+    		    <h4>{{ note["title"] }}</h4>
+            </div>
+            <a class="float-right text-danger pl-3" href="{{ url_for('notes.delete', note_id=note['id']) }}">
+                <i data-feather="x-square"></i>
+             </a>
+            <a class="float-right" data-toggle="modal" data-noteid="{{ note['id'] }}" data-notetitle="{{ note['title'] }}" data-notecontent="{{ note['content'] }}" data-notelanguage="{{ note['language'] }}" data-action="edit" href="#notesModal">
+               <i data-feather="edit"></i>
+            </a>
+        </button>
+        <div class="note col-md-10 offset-md-1 border py-1 mb-4 bg-light collapse" id="note-text-{{ note['id'] }}">
+            <div class="card-text">
+                <pre><code class="language-{{ note['language'] }}"><p>{{ note["content"] }}</p></code></pre>
+            </div>
+        </div>
     	{% endfor %}
+        </div>
     </section>
 
     <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="notesModal" aria-hidden="true">
@@ -43,12 +47,24 @@
                 <div class="modal-body">
                     <form id="modal-form" method="POST">
                         <div class="form-group">
-                            <label for="title-input" class="col-form-label">Note Title:</label>
+                            <label for="title-input" class="col-form-label">Note Title</label>
                             <input required type="text" class="form-control" name="title" maxlength="128" id="title-input">
                         </div>
                         <div class="form-group">
-                            <label for="content-input" class="col-form-label">Note Content:</label>
-                            <textarea required class="form-control" name="content" id="content-input"></textarea>
+                            <label for="content-input" class="col-form-label">Note Content</label>
+                            <textarea required rows="6" class="form-control" name="content" id="content-input"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="language-input" class="col-form-label">Language</label>
+                            <select required class="form-control" name="language" id="language-input">
+                                <option value="none">-----</option>
+                                <option value="cpp">C++</option>
+                                <option value="python">Python</option>
+                                <option value="c">C</option>
+                                <option value="js">JavaScript</option>
+                                <option value="java">Java</option>
+                                <option value="csharp">C#</option>
+                            </select>
                         </div>
                     </form>
                 </div>
@@ -73,21 +89,25 @@
             let note_id = button.data("noteid");
             let note_title = button.data("notetitle");
             let note_content = button.data("notecontent");
+            let note_language = button.data("notelanguage");
 
             form.attr("action", "{{ url_for('notes.edit', note_id=-1) }}".replace("-1", note_id))
 
             modal.find("#title-input").val(note_title);
             modal.find("#content-input").val(note_content);
+            modal.find("#language-input").val(note_language);
         }
         else {
             form.attr("action", "{{ url_for('notes.add') }}")
 
             modal.find("#title-input").val("");
             modal.find("#content-input").val("");
+            modal.find("#language-input").val("none");
         }
 
         modal.find(".modal-title").text(action + " Note");
         modal.find(".modal-action").text(action);
     });
 </script>
+<script src="{{ url_for('static', filename='js/prism.js') }}"></script>
 {% endblock %}

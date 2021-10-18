@@ -9,7 +9,7 @@ bp = Blueprint("notes", __name__)
 @bp.route("/notes/", methods=["GET"])
 @login_required
 def index():
-    notes = query_db("SELECT id, title, content FROM notes WHERE instance_id = ?", [session["instance_id"]])
+    notes = query_db("SELECT id, title, content, language FROM notes WHERE instance_id = ?", [session["instance_id"]])
 
     return render_template(
         "notes.html",
@@ -22,10 +22,11 @@ def index():
 def add():
     note_title = request.form.get("title")
     note_content = request.form.get("content")
+    note_language = request.form.get("language")
 
     query_db(
-        "INSERT INTO notes (title, content, instance_id) VALUES (?, ?, ?)",
-        [note_title, note_content, session["instance_id"]],
+        "INSERT INTO notes (title, content, language, instance_id) VALUES (?, ?, ?, ?)",
+        [note_title, note_content, note_language, session["instance_id"]],
         commit=True,
     )
     flash("Note added successfully")
@@ -38,10 +39,11 @@ def add():
 def edit(note_id):
     note_title = request.form.get("title")
     note_content = request.form.get("content")
+    note_language = request.form.get("language")
 
     query_db(
-        "UPDATE notes SET title = ?, content = ? WHERE id = ? AND instance_id = ?",
-        [note_title, note_content, note_id, session["instance_id"]],
+        "UPDATE notes SET title = ?, content = ?, language = ? WHERE id = ? AND instance_id = ?",
+        [note_title, note_content, note_language, note_id, session["instance_id"]],
         commit=True,
     )
     flash("Note updated successfully")

@@ -15,7 +15,7 @@
 	{% endfor %}
 
 	<div class="container">
-		<form class="form-signin" action="/login" method="POST">
+		<form class="form-signin" action="{{ url_for('auth.login') }}" method="POST">
 			<input class="form-control" name="instance" type="text" placeholder="Instance Name" autofocus>
 			<input class="form-control mt-2" name="password" type="password" placeholder="Password">
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
