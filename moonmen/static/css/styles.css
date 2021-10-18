@@ -16,10 +16,6 @@ body {
   vertical-align: text-bottom;
 }
 
-/* -------------
-    LAYOUT
-   ------------- */
-
 .sidebar {
   position: fixed;
   top: 0;
@@ -124,10 +120,6 @@ main > div {
   width: 40%;
 }
 
-/* -------------
-    DASHBOARD
-   ------------- */
-
 .task {
   margin: auto 5em;
   height: 74px;
@@ -170,31 +162,12 @@ main > div {
   text-decoration: none;
 }
 
-/* -------------
-    FILE STORAGE
-   ------------- */
-
-.file svg {
-  width: 22px;
-  height: 22px;
-}
-
-
-/* -------------
-      NOTES
-   ------------- */
-
-.card {
-  width: 24%;
-  vertical-align: top;
-}
-
-.card-text {
-  white-space: pre-wrap;
-  margin: -3em auto;
-}
-
-.card-footer svg {
+.note svg, .file svg {
   width: 24px;
   height: 24px;
+}
+
+.note:focus
+{
+  outline: 0;
 }

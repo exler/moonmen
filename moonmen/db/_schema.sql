@@ -25,6 +25,7 @@ CREATE TABLE notes (
     instance_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     content TEXT,
+    language TEXT NOT NULL DEFAULT 'none',
     FOREIGN KEY (instance_id) REFERENCES instances (id)
 );
 
