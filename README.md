@@ -30,11 +30,10 @@ $ flask init-project <project_name>
 
 # Run using Flask's development server
 $ flask run
+
+# Run using Gunicorn
+$ gunicorn -w 4 -b 127.0.0.1:8000 "moonmen:create_app()"
 ```
-
-*moonmen* will detect if the project exists and if not, the user will be prompted for details about the project.
-
-If ran again with the same command, the web interface will be made available.
 
 ## License
 
