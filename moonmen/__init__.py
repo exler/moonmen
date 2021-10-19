@@ -14,7 +14,7 @@ def create_app():
 
     base_dir = os.path.dirname(__file__)
     app.config.from_mapping(
-        SECRET_KEY=os.getenv("SECRET_KEY", os.urandom(24)),
+        SECRET_KEY=os.getenv("SECRET_KEY"),
         BASE_DIR=base_dir,
         UPLOAD_DIR=os.path.join(base_dir, "uploads"),
         DATABASE=os.path.join(base_dir, "moonmen.sqlite"),

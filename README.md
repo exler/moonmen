@@ -21,6 +21,7 @@ $ poetry install
 
 ```bash
 $ export FLASK_APP=moonmen
+$ export SECRET_KEY=<YOUR_SECRET_KEY>
 
 # Initialize SQLite database
 $ flask init-db
@@ -32,7 +33,7 @@ $ flask init-project <project_name>
 $ flask run
 
 # Run using Gunicorn
-$ gunicorn -w 4 -b 127.0.0.1:8000 "moonmen:create_app()"
+$ gunicorn -w 4 -b 0.0.0.0:8000 "moonmen:create_app()"
 ```
 
 ## License
