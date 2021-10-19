@@ -13,11 +13,12 @@ def login():
         instance_name = request.form.get("instance")
         instance_password = request.form.get("password")
 
-        instance = query_db("SELECT id, password FROM instances WHERE name = ?", [instance_name])[0]
+        instance = query_db("SELECT id, password FROM instances WHERE name = ?", [instance_name])
 
-        if instance is None:
+        if not instance:
             flash("No instance with given name")
         else:
+            instance = instance[0]
             if check_password_hash(instance["password"], instance_password):
                 session["instance_id"] = instance["id"]
                 session["instance_name"] = instance_name
