@@ -31,7 +31,11 @@
         </button>
         <div class="note col-md-10 offset-md-1 border py-1 mb-4 bg-light collapse" id="note-text-{{ note['id'] }}">
             <div class="card-text">
-                <pre><code class="language-{{ note['language'] }}"><p>{{ note["content"] }}</p></code></pre>
+                {% if note['language'] == 'none' %}
+                <p class="pre-line">{{ note["content"] }}</p>
+                {% else %}
+                <pre><code class="language-{{ note['language'] }}">{{ note["content"] }}</code></pre>
+                {% endif %}
             </div>
         </div>
     	{% endfor %}

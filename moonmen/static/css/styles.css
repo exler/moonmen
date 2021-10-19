@@ -74,16 +74,6 @@ body {
   text-transform: uppercase;
 }
 
-[role="main"] {
-  padding-top: 133px; /* Space for fixed navbar */
-}
-
-@media (min-width: 768px) {
-  [role="main"] {
-    padding-top: 48px; /* Space for fixed navbar */
-  }
-}
-
 .navbar-brand {
   padding-top: .75rem;
   padding-bottom: .75rem;
@@ -170,4 +160,8 @@ main > div {
 .note:focus
 {
   outline: 0;
+}
+
+.pre-line {
+  white-space: pre-line;
 }
