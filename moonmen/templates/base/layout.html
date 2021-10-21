@@ -38,13 +38,28 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link {% block dashboard_active %}{% endblock %}" href="{{ url_for('dashboard.index') }}"><i data-feather="home"></i>Dashboard</a>
+							<a class="nav-link {% block dashboard_active %}{% endblock %}" href="{{ url_for('dashboard.index') }}">
+								<i data-feather="home"></i>
+								Dashboard
+							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link {% block notes_active %}{% endblock %}" href="{{ url_for('notes.index') }}"><i data-feather="file-text"></i>Notes</a>
+							<a class="nav-link {% block notes_active %}{% endblock %}" href="{{ url_for('notes.index') }}">
+								<i data-feather="file-text"></i>
+								Notes
+							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link {% block files_active %}{% endblock %}" href="{{ url_for('files.index') }}"><i data-feather="cloud"></i>Files</a>
+							<a class="nav-link {% block files_active %}{% endblock %}" href="{{ url_for('files.index') }}">
+								<i data-feather="cloud"></i>
+								Files
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link {% block timer_active %}{% endblock %}" href="{{ url_for('timers.index') }}">
+								<i data-feather="clock"></i>
+								Timers
+							</a>
 						</li>
 					</ul>
 					<img class="sidebar-brand" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="moonmen Logo">

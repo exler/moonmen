@@ -6,7 +6,7 @@ from werkzeug.exceptions import NotFound, RequestEntityTooLarge
 from moonmen.commands import init_db, init_project
 from moonmen.db.base import close_db
 from moonmen.handlers import page_not_found, request_entity_too_large
-from moonmen.views import auth, dashboard, files, notes
+from moonmen.views import auth, dashboard, files, notes, timers
 
 
 def create_app():
@@ -42,6 +42,7 @@ def register_blueprints(app):
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(notes.bp)
     app.register_blueprint(files.bp)
+    app.register_blueprint(timers.bp)
 
 
 def register_commands(app):

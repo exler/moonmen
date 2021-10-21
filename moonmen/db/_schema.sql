@@ -36,3 +36,11 @@ CREATE TABLE files (
     path TEXT UNIQUE NOT NULL,
     FOREIGN KEY (instance_id) REFERENCES instances (id)
 );
+
+CREATE TABLE timers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    instance_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    dt DATETIME NOT NULL,
+    FOREIGN KEY (instance_id) REFERENCES instances (id)
+)

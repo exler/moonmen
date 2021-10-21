@@ -1,0 +1,143 @@
+{% extends "base/layout.html" %}
+{% block title %}Timers{% endblock %}
+{% block timer_active %}active{% endblock %}
+
+{% block styles%}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/prism.css') }}">
+{% endblock %}
+
+{% block content %}
+	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
+        <h2>Timers</h2>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" data-toggle="modal" data-target="#timersModal" data-action="add" class="btn btn-sm btn-outline-secondary">
+            	<i data-feather="plus-square"></i>   Add
+            </button>
+        </div>
+    </div>
+    <section>
+        <div class="row">
+        {% for timer in timers %}
+        <div class="card col-md-3 d-inline-block mb-2 mr-2 ml-4">
+            <div class="card-body">
+                <div class="card-title text-center border-bottom">
+                    <h4>{{ timer["name"] }}</h4>
+                </div>
+                <div class="card-text">
+                    <ul class="countdown text-center" data-timerdt="{{ timer['dt'] }}">
+                        <li><span class="hours"></span>Hours</li>
+                        <li><span class="minutes"></span>Minutes</li>
+                        <li><span class="seconds"></span>Seconds</li>
+                    </ul>
+                </div>
+                <div class="card-footer text-center">
+    				<a class="mr-5 no-decoration" data-toggle="modal" data-timerid="{{ timer['id'] }}" data-timername="{{ timer['name'] }}" data-timerdt="{{ timer['dt'] }}" data-action="edit" href="#timersModal">
+                	   <i data-feather="edit"></i>
+                    </a>
+                    <a class="ml-5 text-danger" href="{{ url_for('timers.delete', timer_id=timer['id']) }}">
+                	   <i data-feather="x-square"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </section>
+
+    <div class="modal fade" id="timersModal" tabindex="-1" role="dialog" aria-labelledby="timersModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-capitalize"></h5>
+                </div>
+                <div class="modal-body">
+                    <form id="modal-form" method="POST">
+                        <div class="form-group">
+                            <label for="name-input" class="col-form-label">Timer Name</label>
+                            <input required type="text" class="form-control" name="name" maxlength="128" id="name-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="content-input" class="col-form-label">Datetime</label>
+                            <input type="datetime-local" class="form-control" name="dt" id="dt-input">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" form="modal-form" class="btn btn-primary modal-action text-capitalize"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function now() {
+        let d = new Date();
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().slice(0, 16)
+    }
+
+    const second = 1000,
+            minute = second * 60,
+            hour = minute * 60;
+    
+    $(".countdown").each(function(index) {
+        setCountdown($(this));
+    });
+
+    function setCountdown(element) {
+        const intervalId = setInterval(function() {
+            const nowTime = new Date().getTime();
+            const targetTime = new Date(element.data("timerdt")).getTime();
+            const distance = targetTime - nowTime;
+            console.log(nowTime)
+            console.log(targetTime)
+            console.log(distance)
+            
+            if (distance < 0) {
+                // Do something when date is reached
+                element.find(".hours").text(0);
+                element.find(".minutes").text(0);
+                element.find(".seconds").text(0);
+                clearInterval(intervalId);
+            } else {
+                element.find(".hours").text(Math.floor(distance / hour));
+                element.find(".minutes").text(Math.floor((distance % hour) / minute));
+                element.find(".seconds").text(Math.floor((distance % minute) / second));
+            }
+        }, 0);
+    }
+
+    $("#timersModal").on("show.bs.modal", function (event) {
+        let button = $(event.relatedTarget);
+        let action = button.data("action");
+        let modal = $(this);
+        let form = modal.find("#modal-form");
+
+        let n = now();
+        modal.find("#dt-input").attr("min", n)
+
+        if(action == "edit") {
+            let timer_id = button.data("timerid");
+            let timer_name = button.data("timername");
+            let timer_dt = button.data("timerdt");
+
+            form.attr("action", "{{ url_for('timers.edit', timer_id=-1) }}".replace("-1", timer_id))
+
+            modal.find("#name-input").val(timer_name);
+            modal.find("#dt-input").val(timer_dt);
+        }
+        else {
+            form.attr("action", "{{ url_for('timers.add') }}")
+
+            modal.find("#name-input").val("");
+            modal.find("#dt-input").val(n);
+        }
+
+        modal.find(".modal-title").text(action + " Timer");
+        modal.find(".modal-action").text(action);
+    });
+</script>
+{% endblock %}
