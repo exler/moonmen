@@ -44,6 +44,12 @@
 							</a>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link {% block tasks_active %}{% endblock %}" href="{{ url_for('tasks.index') }}">
+								<i data-feather="list"></i>
+								Tasks
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link {% block notes_active %}{% endblock %}" href="{{ url_for('notes.index') }}">
 								<i data-feather="file-text"></i>
 								Notes

@@ -6,11 +6,10 @@
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
         <h2>Dashboard</h2>
     </div>
-    <section class="text-center">
+    <section>
     	<div class="row">
-    		<div class="col-md-3 border-right">
-    			<h4>Info</h4>
-    			<ul class="text-left list-unstyled pt-3">
+    		<div class="col-md-12">
+    			<ul class="list-unstyled pt-3">
     				<li>
                         <span class="font-weight-bold pr-3">Project name:</span> {{ session["instance_name"] }}
                     </li>
@@ -26,105 +25,7 @@
                     {% endif %}
     			</ul>
     		</div>
-    		<div class="col-md-9 d-none d-sm-none d-md-block">
-    			<h4>Tasks</h4>
-                
-                {% for task in tasks %}
-                <div class="task mt-5 pt-2 pb-2 border bg-light">
-                    <div class="float-left pl-5 w-40">
-                        <h5 class="font-weight-bold">{{ task["title"] }}</h5>
-                        <p class="font-italic">{{ task["description"] }}</p>
-                    </div>
-
-                    <div class="float-right pr-5 pt-3">
-                        <a data-toggle="modal" data-taskid="{{ task['id'] }}" data-tasktitle="{{ task['title'] }}" data-taskdescription="{{ task['description'] }}" data-taskstatus="{{ task['status'] }}" data-action="edit" href="#tasksModal">
-                            <i data-feather="edit"></i>
-                        </a>
-                        <a class="text-danger" href="{{ url_for('dashboard.delete', task_id=task['id']) }}">
-                            <i data-feather="x-square"></i>
-                        </a>
-                    </div>
-                    <div class="text-center">
-                        <h6>Status</h6>
-                        <h4 class="pr-5">{{ get_status_name(task["status"]) }}</h4>
-                    </div>
-                </div>
-                {% endfor %}
-
-                <a class="no-decoration" data-toggle="modal" data-action="add" href="#tasksModal">
-    			    <div class="task new-task mt-5 pt-3 pb-3 border bg-light">
-                        <i data-feather="plus-circle"></i>
-                    </div>
-                </a>
-    		</div>
     	</div>
     </section>
-
-    <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="tasksModal" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-capitalize"></h5>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-form" method="POST">
-                        <div class="form-group">
-                            <label for="name-input" class="col-form-label eve">Task Title</label>
-                            <input required type="text" class="form-control" name="title" maxlength="128" id="title-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="description-input" class="col-form-label">Task Description</label>
-                            <input required type="text" class="form-control" name="description" maxlength="512" id="description-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="status-select" class="col-form-label">Task Status</label>
-                            <select required class="form-control" name="status" id="status-select">
-                                {% for status in statuses %}
-                                <option value="{{ status[0] }}">{{ status[1] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" form="modal-form" class="btn btn-primary modal-action text-capitalize"></button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-    $("#tasksModal").on("show.bs.modal", function (event) {
-        let button = $(event.relatedTarget);
-        let action = button.data("action");
-        let modal = $(this);
-        let form = modal.find("#modal-form");
-
-        if(action == "edit") {
-            let task_id = button.data("taskid");
-            let task_title = button.data("tasktitle");
-            let task_description = button.data("taskdescription");
-            let task_status = button.data("taskstatus");
-
-            form.attr("action", "{{ url_for('dashboard.edit', task_id=-1) }}".replace("-1", task_id))
-
-            modal.find("#title-input").val(task_title);
-            modal.find("#description-input").val(task_description);
-            modal.find("#status-select").val(task_status);
-        }
-        else {
-            form.attr("action", "{{ url_for('dashboard.add') }}");
-
-            modal.find("#name-input").val("");
-            modal.find("#description-input").val("");
-            modal.find("#status-select").val(1);
-        }
-
-        modal.find(".modal-title").text(action + " Task");
-        modal.find(".modal-action").text(action);
-    });
-</script>
-{% endblock %}
