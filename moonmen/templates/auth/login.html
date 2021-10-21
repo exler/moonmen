@@ -1,0 +1,25 @@
+{% extends "base/layout.html" %}
+{% block title %}Login{% endblock %}
+
+{% block styles %}
+<style>
+	html,
+	body {
+		height: 100%;
+	}
+	
+	body {
+		display: flex;
+		align-items: center;
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+	<form class="form-signin" action="{{ url_for('auth.login') }}" method="POST">
+		<input class="form-control" name="instance" type="text" placeholder="Instance Name" required autofocus>
+		<input class="form-control mt-2" name="password" type="password" placeholder="Password">
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+		<img class="mb-4" src="{{ url_for('static', filename='images/icon-text.png') }}" alt="Moonmen">
+	</form>
+{% endblock %}

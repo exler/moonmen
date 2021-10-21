@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{ session["instance_name"] }} | {% block title %}{% endblock %}</title>
+	<title>{% if session["instance_id"] is defined %}{{ session["instance_name"] }} | {% endif %}{% block title %}{% endblock %}</title>
 
 	<link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 
@@ -17,16 +17,22 @@
 		<div class="alert alert-danger">{{ message }}</div>
 	{% endfor %}
 
+	{% if session["instance_id"] is defined %}
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
 		<a class="navbar-brand col-sm-2 col-md-1 mr-0" href="#">{{ session["instance_name"] }}</a>
-		<ul class="navbar-nav px-3">
+		<ul class="navbar-nav flex-row px-3">
+			<li class="nav-item text-nowrap pr-4">
+				<a class="nav-link" href="{{ url_for('auth.change_password') }}">Change password</a>
+			</li>
 			<li class="nav-item text-nowrap">
 				<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
 			</li>
 		</ul>
 	</nav>
+	{% endif %}
 
 	<div class="container-fluid">
+		{% if session["instance_id"] is defined %}
 		<div class="row">
 			<nav class="col-md-1 d-none d-md-block bg-light sidebar">
 				<div class="sidebar-sticky">
@@ -45,7 +51,8 @@
 				</div>
 			</nav>
 		</div>
-		<main class="col-md-11 ml-sm-auto col-lg-11 px-4">
+		{% endif %}
+		<main class="ml-sm-auto px-4 {% if session["instance_id"] %}col-md-11{% endif %}">
 			{% block content %}{% endblock %}
 		</main>
 	</div>
